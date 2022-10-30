@@ -1,11 +1,13 @@
 package com.example.digitalmindwebservices.service.impl;
 
 import com.example.digitalmindwebservices.entities.SocialNetwork;
+import com.example.digitalmindwebservices.entities.User;
 import com.example.digitalmindwebservices.repository.ISocialNetworkRepository;
 import com.example.digitalmindwebservices.service.ISocialNetworkService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Id;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,4 +46,5 @@ public class SocialNetworkImpl implements ISocialNetworkService {
     public List<SocialNetwork> findSocialNetworkByName(String name_social_network) throws Exception {
         return socialNetworkRepository.findSocialNetworkByName(name_social_network);
     }
+
 }

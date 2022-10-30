@@ -1,6 +1,8 @@
 package com.example.digitalmindwebservices.service;
 
 import com.example.digitalmindwebservices.entities.SocialNetwork;
+import com.example.digitalmindwebservices.entities.User;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 

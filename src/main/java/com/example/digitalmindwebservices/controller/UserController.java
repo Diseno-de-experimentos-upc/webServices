@@ -2,6 +2,10 @@ package com.example.digitalmindwebservices.controller;
 
 import com.example.digitalmindwebservices.entities.User;
 import com.example.digitalmindwebservices.service.IUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
+@Api(tags = "Users", value = "Web Service RESTFul of Users")
 public class UserController {
     private final IUserService userService;
 
@@ -21,6 +26,12 @@ public class UserController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "List all Users", notes = "Method to list all Users")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "All Users founds"),
+            @ApiResponse(code = 404, message = "Users Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
     public ResponseEntity<List<User>> findAllUsers(){
         try {
             List<User> users = userService.getAll();
@@ -34,6 +45,12 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search User by Id", notes = "Method for find a User by id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User found by Id"),
+            @ApiResponse(code = 404, message = "User Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
     public ResponseEntity<User> findUserById(@PathVariable("id")Long id){
         try {
             Optional<User> user = userService.getById(id);
@@ -46,6 +63,12 @@ public class UserController {
     }
 
     @GetMapping(value = "/searchByEmail/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search User by Email", notes = "Method for find a User by email")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User found by Email"),
+            @ApiResponse(code = 404, message = "User Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
     public ResponseEntity<User> findByEmail (@PathVariable ("email") String email){
         try {
             User user = userService.findByEmail(email);
@@ -58,6 +81,12 @@ public class UserController {
     }
 
     @GetMapping(value = "/searchByFirstName/{firstName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search User by First Name", notes = "Method for find a User by first name")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User found by First Name"),
+            @ApiResponse(code = 404, message = "User Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
     public ResponseEntity<List<User>> findByFirstName (@PathVariable ("firstName") String firstName){
         try {
             List<User> users = userService.findByFirstName(firstName);
@@ -70,6 +99,12 @@ public class UserController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Create User", notes = "Method for create a User")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "User created"),
+            @ApiResponse(code = 400, message = "Invalid Request"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
     public ResponseEntity<User> insertUser(@Valid @RequestBody User user){
         try{
             User newUser = userService.save(user);
@@ -80,6 +115,12 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Update User", notes = "Method for update a User")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User updated"),
+            @ApiResponse(code = 400, message = "Invalid Request"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
     public ResponseEntity<User> updateUser(@PathVariable("id") Long id, @Valid @RequestBody User user){
         try {
             Optional<User> currentUser = userService.getById(id);
@@ -94,6 +135,12 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Delete User", notes = "Method for delete a User")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User deleted"),
+            @ApiResponse(code = 404, message = "User Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
     public ResponseEntity<User> deleteUser(@PathVariable("id") Long id){
         try {
             Optional<User> user = userService.getById(id);

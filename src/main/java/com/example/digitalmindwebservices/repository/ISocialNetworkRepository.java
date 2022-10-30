@@ -11,8 +11,7 @@ import java.util.List;
 
 @Repository
 public interface ISocialNetworkRepository extends JpaRepository<SocialNetwork, Long> {
-    @Query("select s from SocialNetwork s where s.nameSocialNetwork=:name")
-    List<SocialNetwork> findSocialNetworkByName(@Param("name") String name_social_network);
-
+    @Query("select s from SocialNetwork s where s.nameSocialNetwork=:name_social_network")
+    List<SocialNetwork> findSocialNetworkByName(@Param("name_social_network") String name_social_network);
 
 }
