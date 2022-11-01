@@ -98,9 +98,9 @@ public class SocialNetworkController {
     })
     public ResponseEntity<SocialNetwork> insertSocialNetwork(@PathVariable("id") Long id, @Valid @RequestBody SocialNetwork socialNetwork){
         try {
-            Optional<User> user = userService.getById(id);
-            if(user.isPresent()){
-                socialNetwork.setUser(user.get());
+            Optional<User> user = userService.getById(id);//1 ->Henry
+            if(user.isPresent()){//Se encontro a henry
+                socialNetwork.setUser(user.get()); //Asignamos a la red social el usuario
                 SocialNetwork socialNetworkNew = socialNetworkService.save(socialNetwork);
                 return ResponseEntity.status(HttpStatus.CREATED).body(socialNetworkNew);
             }
