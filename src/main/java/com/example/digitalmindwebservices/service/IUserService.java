@@ -9,4 +9,6 @@ public interface IUserService extends CrudService<User> {
     User findByEmail(String email) throws Exception;
 
     List<User> findByFirstName(String firstName) throws Exception;
+
+
 }
