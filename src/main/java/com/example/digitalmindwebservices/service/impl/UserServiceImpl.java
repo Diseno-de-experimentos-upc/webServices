@@ -24,6 +24,7 @@ public class UserServiceImpl implements IUserService {
         this.userRepository = userRepository;
     }
     @Override
+    @Transactional
     public User save(User user) throws Exception {
         return userRepository.save(user);
     }

@@ -105,6 +105,7 @@ public class UserController {
             @ApiResponse(code = 400, message = "Invalid Request"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
+
     public ResponseEntity<User> insertUser(@Valid @RequestBody User user){
         try{
             User newUser = userService.save(user);
