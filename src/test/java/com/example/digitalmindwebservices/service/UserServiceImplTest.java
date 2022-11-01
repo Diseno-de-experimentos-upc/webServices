@@ -21,6 +21,7 @@ public class UserServiceImplTest {
     private IUserRepository userRepository;
     @InjectMocks
     private UserServiceImpl userService;
+
     @Test
     public void saveTest(){
         User user = new User(1L, "Juan", "Perez", "juan@gmail.com",
@@ -36,4 +37,12 @@ public class UserServiceImplTest {
         assertThat(savedUser).isNotNull();
         assertEquals(user, savedUser);
     }
+
+    @Test
+    public void deleteTest() throws Exception {
+        Long id = 1L;
+        userService.delete(id);
+        verify(userRepository, times(1)).deleteById(id);
+    }
+
 }
