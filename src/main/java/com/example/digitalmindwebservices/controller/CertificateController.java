@@ -1,7 +1,9 @@
 package com.example.digitalmindwebservices.controller;
 
 import com.example.digitalmindwebservices.entities.Certificate;
+import com.example.digitalmindwebservices.entities.Education;
 import com.example.digitalmindwebservices.service.ICertificateService;
+import com.example.digitalmindwebservices.service.IEducationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -20,10 +22,11 @@ import java.util.Optional;
 public class CertificateController {
 
     private final ICertificateService certificateService;
+    private final IEducationService educationService;
 
-
-    public CertificateController(ICertificateService certificateService) {
+    public CertificateController(ICertificateService certificateService, IEducationService educationService) {
         this.certificateService = certificateService;
+        this.educationService = educationService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -70,17 +73,24 @@ public class CertificateController {
         }
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Create Certificate", notes = "Method for creating a Certificate")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Certificate created"),
             @ApiResponse(code = 404, message = "Certificate Not Created"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
-    public ResponseEntity<Certificate> insertCertificate(@RequestBody Certificate certificate){
+    public ResponseEntity<Certificate> insertCertificate(@PathVariable("id")Long educationId, @RequestBody Certificate certificate){
         try {
-            Certificate newCertificate = certificateService.save(certificate);
-            return ResponseEntity.status(HttpStatus.CREATED).body(newCertificate);
+            Optional<Education> education  = educationService.getById(educationId);
+            if (!education.isPresent()){
+                return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
+            }
+            else {
+                certificate.setEducation(education.get());
+                Certificate newCertificate = certificateService.save(certificate);
+                return ResponseEntity.status(HttpStatus.CREATED).body(newCertificate);
+            }
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

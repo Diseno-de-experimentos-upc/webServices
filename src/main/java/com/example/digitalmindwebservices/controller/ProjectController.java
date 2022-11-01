@@ -1,6 +1,8 @@
 package com.example.digitalmindwebservices.controller;
 
+import com.example.digitalmindwebservices.entities.DigitalProfile;
 import com.example.digitalmindwebservices.entities.Project;
+import com.example.digitalmindwebservices.service.IDigitalProfileService;
 import com.example.digitalmindwebservices.service.IProjectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,9 +22,11 @@ import java.util.Optional;
 public class ProjectController {
 
     private final IProjectService projectService;
+    private final IDigitalProfileService digitalProfileService;
 
-    public ProjectController(IProjectService projectService) {
+    public ProjectController(IProjectService projectService, IDigitalProfileService digitalProfileService) {
         this.projectService = projectService;
+        this.digitalProfileService = digitalProfileService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,17 +71,24 @@ public class ProjectController {
         }
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}" , produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Insert Project", notes = "Method for inserting an Project")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Project created"),
             @ApiResponse(code = 404, message = "Project Not Created"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
-    public ResponseEntity<Project> insertProject(@RequestBody Project project){
-        try{
-            Project newProject = projectService.save(project);
-            return ResponseEntity.status(HttpStatus.CREATED).body(newProject);
+    public ResponseEntity<Project> insertProject(@PathVariable("id") Long digitalProfileId , @RequestBody Project project){
+        try {
+             Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(digitalProfileId);
+                if (!digitalProfile.isPresent()){
+                    return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
+                }
+                else {
+                    project.setDigitalProfile(digitalProfile.get());
+                    Project newProject = projectService.save(project);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(newProject);
+                }
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

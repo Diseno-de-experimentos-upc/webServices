@@ -1,6 +1,8 @@
 package com.example.digitalmindwebservices.controller;
 
+import com.example.digitalmindwebservices.entities.Education;
 import com.example.digitalmindwebservices.entities.StudyCenter;
+import com.example.digitalmindwebservices.service.IEducationService;
 import com.example.digitalmindwebservices.service.IStudyCenterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,9 +22,10 @@ import java.util.Optional;
 public class StudyCenterController {
 
     private final IStudyCenterService studyCenterService;
-
-    public StudyCenterController(IStudyCenterService studyCenterService) {
+    private final IEducationService educationService;
+    public StudyCenterController(IStudyCenterService studyCenterService, IEducationService educationService) {
         this.studyCenterService = studyCenterService;
+        this.educationService = educationService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,17 +70,24 @@ public class StudyCenterController {
         }
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Create Study Center", notes = "Method for creating an Study Center")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Study Center created"),
             @ApiResponse(code = 404, message = "Study Center Not Created"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
-    public ResponseEntity<StudyCenter> insertStudyCenter(@RequestBody StudyCenter studyCenter){
+    public ResponseEntity<StudyCenter> insertStudyCenter(@PathVariable("id") Long educationId ,  @RequestBody StudyCenter studyCenter){
         try {
-            StudyCenter newStudyCenter = studyCenterService.save(studyCenter);
-            return ResponseEntity.status(HttpStatus.CREATED).body(newStudyCenter);
+            Optional<Education> education = educationService.getById(educationId);
+            if (!education.isPresent()){
+                return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
+            }
+            else {
+                studyCenter.setEducation(education.get());
+                StudyCenter newStudyCenter = studyCenterService.save(studyCenter);
+                return ResponseEntity.status(HttpStatus.CREATED).body(newStudyCenter);
+            }
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
