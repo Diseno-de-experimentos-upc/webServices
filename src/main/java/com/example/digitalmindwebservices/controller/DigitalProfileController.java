@@ -83,4 +83,48 @@ public class DigitalProfileController {
         }
     }
 
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Update Digital Profile", notes = "Method for updating a Digital Profile")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Digital Profile updated"),
+            @ApiResponse(code = 404, message = "Digital Profile Not Updated"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<DigitalProfile> updateDigitalProfile(@PathVariable("id") Long id, @RequestBody DigitalProfile digitalProfile){
+        try{
+            Optional<DigitalProfile> digitalProfile1 = digitalProfileService.getById(id);
+            if (!digitalProfile1.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                digitalProfile.setId(id);
+                digitalProfileService.save(digitalProfile);
+                return new ResponseEntity<>(digitalProfile, HttpStatus.OK);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Delete Digital Profile", notes = "Method for deleting a Digital Profile")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Digital Profile deleted"),
+            @ApiResponse(code = 404, message = "Digital Profile Not Deleted"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<DigitalProfile> deleteDigitalProfile(@PathVariable("id") Long id){
+        try{
+            Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(id);
+            if (!digitalProfile.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                digitalProfileService.delete(id);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
