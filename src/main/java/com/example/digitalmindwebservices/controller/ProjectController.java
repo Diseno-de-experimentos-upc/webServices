@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/v1/projects")
+@RequestMapping("/api/v1/projects")
 @Api(tags = "Projects", value = "Web Service RESTFul of Projects")
 public class ProjectController {
 

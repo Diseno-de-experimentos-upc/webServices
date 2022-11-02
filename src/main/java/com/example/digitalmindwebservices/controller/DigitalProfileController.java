@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/v1/digital_profiles")
+@RequestMapping("/api/v1/digital_profiles")
 @Api(value = "Web Service RESTFul of Digital Profiles", tags = "DigitalProfiles")
 public class DigitalProfileController {
 

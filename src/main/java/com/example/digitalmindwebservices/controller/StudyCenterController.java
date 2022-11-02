@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/v1/study-centers")
+@RequestMapping("/api/v1/study-centers")
 @Api(tags = "StudyCenters", value = "Web Service RESTFul of Study Centers")
 public class StudyCenterController {
 
