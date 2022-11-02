@@ -15,7 +15,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 @RestController
-@RequestMapping("/api/frameworks")
+@RequestMapping("/api/v1/frameworks")
 @Api(tags = "Frameworks", value = "Web Service RESTFul of Frameworks")
 public class FrameworkController {
     private final IFrameworkService frameworkService;

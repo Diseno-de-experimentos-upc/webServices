@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/programmingLanguages")
+@RequestMapping("/api/v1/programmingLanguages")
 @Api(tags = "Programming Languages", value = "Web Service RESTFul of Programming Languages")
 public class ProgrammingLanguageController {
     private final IProgrammingLanguageService programmingLanguageService;
