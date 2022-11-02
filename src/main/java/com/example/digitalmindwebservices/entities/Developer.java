@@ -23,4 +23,9 @@ public class Developer {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User user;
+
+    public void setUser_id(Long user_id) {
+        this.user = new User();
+        this.user.setId(user_id);
+    }
 }
