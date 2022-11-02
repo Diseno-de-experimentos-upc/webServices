@@ -43,7 +43,7 @@ public class DatabaseControllerTest {
     }
 
     @Test
-    void findAllDatabases() throws Exception {
+    void findAllDatabasesTest() throws Exception {
         given(databaseService.getAll()).willReturn(databaseList);
         mockMvc.perform(get("/api/v1/databases")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -51,7 +51,7 @@ public class DatabaseControllerTest {
     }
 
     @Test
-    void findDatabaseById() throws Exception {
+    void findDatabaseByIdTest() throws Exception {
         Long id = 1L;
         given(databaseService.getById(id)).willReturn(Optional.of(databaseList.get(0)));
         mockMvc.perform(get("/api/v1/databases/{id}", id)
@@ -61,8 +61,8 @@ public class DatabaseControllerTest {
 
     @Test
     public void insertDatabaseTest() throws Exception {
-        Database database = new Database(1L, "Juan",
-                "Perez", "uwu");
+        Database database = new Database(5L, "MongoDB",
+                "https://tjth.co/wp-content/uploads/2018/06/mongodb-logo.png", "MongoDB is a cross-platform document-oriented database program. Classified as a NoSQL database program, MongoDB uses JSON-like documents with schemas.");
         given(databaseService.save(database)).willReturn(database);
         mockMvc.perform(post("/api/v1/databases")
                 .content(asJsonString(database))
@@ -74,8 +74,8 @@ public class DatabaseControllerTest {
     @Test
     public void updateDatabaseTest() throws Exception {
         Long id = 1L;
-        Database database = new Database(1L, "Juan",
-                "Perez", "uwu");
+        Database database = new Database(1L, "MongoDB",
+                "https://tjth.co/wp-content/uploads/2018/06/mongodb-logo.png", "MongoDB is a cross-platform document-oriented database program. Classified as a NoSQL database program, MongoDB uses JSON-like documents with schemas.");
         given(databaseService.getById(id)).willReturn(Optional.of(database));
         mockMvc.perform(put("/api/v1/databases/{id}", id)
                 .content(asJsonString(database))
@@ -100,5 +100,4 @@ public class DatabaseControllerTest {
             throw new RuntimeException(e);
         }
     }
-
 }
