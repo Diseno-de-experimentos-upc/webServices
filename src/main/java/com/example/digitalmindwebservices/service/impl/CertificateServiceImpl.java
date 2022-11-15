@@ -40,5 +40,10 @@ public class CertificateServiceImpl implements ICertificateService {
     public Optional<Certificate> getById(Long id) throws Exception {
         return certificateRepository.findById(id);
     }
+
+    @Override
+    public List<Certificate> findByEducationId(Long id) {
+        return certificateRepository.findByEducationId(id);
+    }
 }
 
