@@ -22,23 +22,8 @@ public class DigitalProfile implements Serializable {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @ManyToOne (fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "developer_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Developer developer;
-
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name = "framework_id")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private Framework framework;
-
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name = "database_id")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private Database database;
-
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name = "programming_language_id")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private ProgrammingLanguage programmingLanguage;
 }
