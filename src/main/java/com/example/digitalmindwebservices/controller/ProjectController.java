@@ -94,4 +94,26 @@ public class ProjectController {
         }
     }
 
+    @GetMapping(value = "/digitalProfile/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search Projects by Digital Profile Id", notes = "Method for finding Projects by Digital Profile id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Projects found by Digital Profile Id"),
+            @ApiResponse(code = 404, message = "Projects Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<Project>> findProjectsByDigitalProfileId(@PathVariable("id") Long digitalProfileId){
+        try {
+            Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(digitalProfileId);
+            if (!digitalProfile.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                List<Project> projects = projectService.findByDigitalProfileId(digitalProfileId);
+                return new ResponseEntity<>(projects, HttpStatus.OK);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

@@ -40,4 +40,9 @@ public class ProjectServiceImpl implements IProjectService {
     public Optional<Project> getById(Long id) throws Exception {
         return projectRepository.findById(id);
     }
+
+    @Override
+    public List<Project> findByDigitalProfileId(Long id) {
+        return projectRepository.findByDigitalProfileId(id);
+    }
 }
