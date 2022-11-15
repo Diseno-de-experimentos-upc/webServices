@@ -1,7 +1,9 @@
 package com.example.digitalmindwebservices.controller;
 
 import com.example.digitalmindwebservices.entities.Company;
+import com.example.digitalmindwebservices.entities.SocialNetwork;
 import com.example.digitalmindwebservices.service.ICompanyService;
+import com.example.digitalmindwebservices.service.IUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -9,7 +11,6 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,9 +24,11 @@ import java.util.Optional;
 public class CompanyController {
 
     private final ICompanyService companyService;
+    private final IUserService userService;
 
-    public CompanyController(ICompanyService companyService) {
+    public CompanyController(ICompanyService companyService, IUserService userService) {
         this.companyService = companyService;
+        this.userService = userService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -88,11 +91,13 @@ public class CompanyController {
     })
     public ResponseEntity<Company> updateCompany(@PathVariable("id") Long id, @Valid @RequestBody Company company){
         try {
-            if(id.equals(company.getId())){
-                Company companyUpdate = companyService.save(company);
-                return new ResponseEntity<>(companyUpdate, HttpStatus.OK);
-            }else{
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            Optional<Company> existingCompany = companyService.getById(id);
+            if(!existingCompany.isPresent())
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            else {
+                company.setId(id);
+                companyService.save(company);
+                return new ResponseEntity<>(company, HttpStatus.OK);
             }
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
