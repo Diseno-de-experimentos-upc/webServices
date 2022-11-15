@@ -3,6 +3,7 @@ package com.example.digitalmindwebservices.controller;
 import com.example.digitalmindwebservices.entities.Database;
 import com.example.digitalmindwebservices.entities.DigitalProfile;
 import com.example.digitalmindwebservices.entities.Framework;
+import com.example.digitalmindwebservices.entities.ProgrammingLanguage;
 import com.example.digitalmindwebservices.service.IDigitalProfileService;
 import com.example.digitalmindwebservices.service.IFrameworkService;
 import io.swagger.annotations.Api;
@@ -125,4 +126,27 @@ public class FrameworkController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "/digitalProfile/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search Framework by Digital Profile Id", notes = "Method for find a Framework by Digital Profile id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Framework found by Digital Profile Id"),
+            @ApiResponse(code = 404, message = "Framework Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<Framework>> findFrameworkByDigitalProfileId(@PathVariable("id") Long digitalProfileId){
+        try {
+            Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(digitalProfileId);
+            if (!digitalProfile.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                List<Framework> frameworks = frameworkService.findByDigitalProfileId(digitalProfileId);
+                return new ResponseEntity<>(frameworks, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
