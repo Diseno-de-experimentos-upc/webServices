@@ -127,4 +127,26 @@ public class DigitalProfileController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "/developer/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search Digital Profile by Developer Id", notes = "Method for finding a Digital Profile by Developer id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Digital Profile found by Developer Id"),
+            @ApiResponse(code = 404, message = "Digital Profile Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<DigitalProfile> findDigitalProfileByDeveloperId(@PathVariable("id") Long id){
+        try {
+            Optional<DigitalProfile> digitalProfile = digitalProfileService.findDigitalProfileByDeveloperId(id);
+            if (!digitalProfile.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                return new ResponseEntity<>(digitalProfile.get(), HttpStatus.OK);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
