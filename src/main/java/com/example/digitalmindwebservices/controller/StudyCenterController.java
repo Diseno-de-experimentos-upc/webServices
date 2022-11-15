@@ -92,4 +92,27 @@ public class StudyCenterController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "/education/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search Study Centers by Education Id", notes = "Method for finding an Study Centers by Education id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Study Centers found by Education Id"),
+            @ApiResponse(code = 404, message = "Study Centers Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<StudyCenter>> findStudyCentersByEducationId(@PathVariable("id") Long educationId){
+        try {
+            Optional<Education> education = educationService.getById(educationId);
+            if (!education.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                List<StudyCenter> studyCenters = studyCenterService.findByEducationId(educationId);
+                return new ResponseEntity<>(studyCenters, HttpStatus.OK);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
