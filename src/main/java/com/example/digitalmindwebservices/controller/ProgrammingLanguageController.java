@@ -1,6 +1,9 @@
 package com.example.digitalmindwebservices.controller;
 
+import com.example.digitalmindwebservices.entities.DigitalProfile;
 import com.example.digitalmindwebservices.entities.ProgrammingLanguage;
+import com.example.digitalmindwebservices.entities.Project;
+import com.example.digitalmindwebservices.service.IDigitalProfileService;
 import com.example.digitalmindwebservices.service.IProgrammingLanguageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,8 +23,10 @@ import java.util.Optional;
 @Api(tags = "Programming Languages", value = "Web Service RESTFul of Programming Languages")
 public class ProgrammingLanguageController {
     private final IProgrammingLanguageService programmingLanguageService;
-    public ProgrammingLanguageController(IProgrammingLanguageService programmingLanguageService) {
+    private final IDigitalProfileService digitalProfileService;
+    public ProgrammingLanguageController(IProgrammingLanguageService programmingLanguageService, IDigitalProfileService digitalProfileService) {
         this.programmingLanguageService = programmingLanguageService;
+        this.digitalProfileService = digitalProfileService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -115,4 +120,27 @@ public class ProgrammingLanguageController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "/digitalProfile/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search Programming Languages by Digital Profile Id", notes = "Method for find Programming Languages by Digital Profile id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Programming Languages found by Digital Profile Id"),
+            @ApiResponse(code = 404, message = "Programming Languages Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<ProgrammingLanguage>> findProgrammingLanguagesByDigitalProfileId(@PathVariable("id") Long digitalProfileId){
+        try {
+            Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(digitalProfileId);
+            if (!digitalProfile.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                List<ProgrammingLanguage> programmingLanguages = programmingLanguageService.findByDigitalProfileId(digitalProfileId);
+                return new ResponseEntity<>(programmingLanguages, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
