@@ -7,4 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface IDatabaseRepository extends JpaRepository<Database, Long> {
+
+    List<Database> findByDigitalProfileId(Long id);
+
 }

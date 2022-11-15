@@ -2,6 +2,7 @@ package com.example.digitalmindwebservices.controller;
 
 import com.example.digitalmindwebservices.entities.Database;
 import com.example.digitalmindwebservices.entities.DigitalProfile;
+import com.example.digitalmindwebservices.entities.Framework;
 import com.example.digitalmindwebservices.entities.Project;
 import com.example.digitalmindwebservices.service.IDatabaseService;
 import com.example.digitalmindwebservices.service.IDigitalProfileService;
@@ -125,4 +126,28 @@ public class DatabaseController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "/digitalProfile/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search Databases by Digital Profile Id", notes = "Method for find Databases by Digital Profile id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Databases found by Digital Profile Id"),
+            @ApiResponse(code = 404, message = "Databases Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<Database>> findDatabasesByDigitalProfileId(@PathVariable("id") Long digitalProfileId){
+        try {
+            Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(digitalProfileId);
+            if (!digitalProfile.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                List<Database> databases = databaseService.findByDigitalProfileId(digitalProfileId);
+                return new ResponseEntity<>(databases, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }
