@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/certificates")
+@CrossOrigin(origins = "*")
 @Api(value = "Web Service RESTFul of Certificates", tags = "Certificates")
 public class CertificateController {
 
@@ -49,7 +50,6 @@ public class CertificateController {
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -73,7 +73,7 @@ public class CertificateController {
         }
     }
 
-    @PostMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/education/{id}",produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Create Certificate", notes = "Method for creating a Certificate")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Certificate created"),
@@ -96,7 +96,7 @@ public class CertificateController {
         }
     }
 
-    //find certificcates by education id
+    //find certificates by education id
     @GetMapping(value = "/education/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Search Certificate by Education Id", notes = "Method for finding an Certificate by Education id")
     @ApiResponses({

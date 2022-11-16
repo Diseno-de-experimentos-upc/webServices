@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/users/{userId}/messages")
+@CrossOrigin(origins = "*")
 @Api(tags = "Messages", value = "Web Service RESTFul of Messages")
 public class MessageController {
 

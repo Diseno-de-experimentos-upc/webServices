@@ -21,6 +21,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/programmingLanguages")
 @Api(tags = "Programming Languages", value = "Web Service RESTFul of Programming Languages")
+@CrossOrigin(origins = "*")
 public class ProgrammingLanguageController {
     private final IProgrammingLanguageService programmingLanguageService;
     private final IDigitalProfileService digitalProfileService;

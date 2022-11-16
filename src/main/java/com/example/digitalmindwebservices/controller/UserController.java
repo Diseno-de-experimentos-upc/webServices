@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/users")
+@CrossOrigin(origins = "*")
 @Api(tags = "Users", value = "Web Service RESTFul of Users")
 public class UserController {
     private final IUserService userService;

@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/projects")
+@CrossOrigin(origins = "*")
 @Api(tags = "Projects", value = "Web Service RESTFul of Projects")
 public class ProjectController {
 

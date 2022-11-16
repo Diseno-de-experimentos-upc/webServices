@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/databases")
+@CrossOrigin(origins = "*")
 @Api(tags = "Databases", value = "Web Service RESTFul of Databases")
 public class DatabaseController {
     private final IDatabaseService databaseService;

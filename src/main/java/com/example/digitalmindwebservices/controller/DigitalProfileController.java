@@ -1,6 +1,8 @@
 package com.example.digitalmindwebservices.controller;
 
+import com.example.digitalmindwebservices.entities.Developer;
 import com.example.digitalmindwebservices.entities.DigitalProfile;
+import com.example.digitalmindwebservices.service.IDeveloperService;
 import com.example.digitalmindwebservices.service.IDigitalProfileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,13 +18,16 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/digital_profiles")
+@CrossOrigin(origins = "*")
 @Api(value = "Web Service RESTFul of Digital Profiles", tags = "DigitalProfiles")
 public class DigitalProfileController {
 
     private final IDigitalProfileService digitalProfileService;
+    private final IDeveloperService developerService;
 
-    public DigitalProfileController(IDigitalProfileService digitalProfileService) {
+    public DigitalProfileController(IDigitalProfileService digitalProfileService, IDeveloperService developerService) {
         this.digitalProfileService = digitalProfileService;
+        this.developerService = developerService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,17 +72,25 @@ public class DigitalProfileController {
         }
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Create Digital Profile", notes = "Method for creating a Digital Profile")
+   //post method to create a new digital profile by developer id
+    @PostMapping(value = "/{developer_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Create a new Digital Profile", notes = "Method for creating a new Digital Profile")
     @ApiResponses({
-            @ApiResponse(code = 201, message = "Digital Profile created"),
-            @ApiResponse(code = 404, message = "Digital Profile Not Created"),
+            @ApiResponse(code = 201, message = "Digital Profile created successfully"),
+            @ApiResponse(code = 404, message = "Digital Profile Not Found"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
-    public ResponseEntity<DigitalProfile> insertDigitalProfile(@RequestBody DigitalProfile digitalProfile){
-        try{
-            DigitalProfile digitalProfile1 = digitalProfileService.save(digitalProfile);
-            return ResponseEntity.status(HttpStatus.CREATED).body(digitalProfile1);
+    public ResponseEntity<DigitalProfile> createDigitalProfile(@PathVariable("developer_id") Long developerId, @RequestBody DigitalProfile digitalProfile){
+        try {
+            Optional<Developer> existingDeveloper = developerService.getById(developerId);
+            if (!existingDeveloper.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                digitalProfile.setDeveloper(existingDeveloper.get());
+                DigitalProfile newDigitalProfile = digitalProfileService.save(digitalProfile);
+                return ResponseEntity.status(HttpStatus.CREATED).body(newDigitalProfile);
+            }
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

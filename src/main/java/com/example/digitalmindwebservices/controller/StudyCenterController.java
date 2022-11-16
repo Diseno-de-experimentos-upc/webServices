@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/study-centers")
+@CrossOrigin(origins = "*")
 @Api(tags = "StudyCenters", value = "Web Service RESTFul of Study Centers")
 public class StudyCenterController {
 

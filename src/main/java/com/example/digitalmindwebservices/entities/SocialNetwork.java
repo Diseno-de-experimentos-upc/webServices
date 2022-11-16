@@ -25,5 +25,6 @@ public class SocialNetwork implements Serializable {
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    //no podemos porque la clase user es abstracta
     private User user;
 }

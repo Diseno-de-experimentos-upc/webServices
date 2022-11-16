@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/frameworks")
+@CrossOrigin(origins = "*")
 @Api(tags = "Frameworks", value = "Web Service RESTFul of Frameworks")
 public class FrameworkController {
     private final IFrameworkService frameworkService;
