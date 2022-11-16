@@ -55,5 +55,8 @@ public class UserServiceImpl implements IUserService {
         return userRepository.findByFirstName(firstName);
     }
 
-
+    @Override
+    public List<User> findByRole(String role) {
+        return userRepository.findByRole(role);
+    }
 }
