@@ -39,4 +39,9 @@ public class FrameworkServiceImpl implements IFrameworkService {
     public Optional<Framework> getById(Long id) throws Exception {
         return frameworkRepository.findById(id);
     }
+
+    @Override
+    public List<Framework> findByDigitalProfileId(Long id) throws Exception {
+        return frameworkRepository.findByDigitalProfileId(id);
+    }
 }

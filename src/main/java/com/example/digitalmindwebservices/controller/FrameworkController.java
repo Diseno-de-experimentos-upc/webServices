@@ -1,6 +1,10 @@
 package com.example.digitalmindwebservices.controller;
 
+import com.example.digitalmindwebservices.entities.Database;
+import com.example.digitalmindwebservices.entities.DigitalProfile;
 import com.example.digitalmindwebservices.entities.Framework;
+import com.example.digitalmindwebservices.entities.ProgrammingLanguage;
+import com.example.digitalmindwebservices.service.IDigitalProfileService;
 import com.example.digitalmindwebservices.service.IFrameworkService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,11 +20,14 @@ import java.util.List;
 import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/frameworks")
+@CrossOrigin(origins = "*")
 @Api(tags = "Frameworks", value = "Web Service RESTFul of Frameworks")
 public class FrameworkController {
     private final IFrameworkService frameworkService;
-    public FrameworkController(IFrameworkService frameworkService) {
+    private final IDigitalProfileService digitalProfileService;
+    public FrameworkController(IFrameworkService frameworkService, IDigitalProfileService digitalProfileService) {
         this.frameworkService = frameworkService;
+        this.digitalProfileService = digitalProfileService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -59,17 +66,24 @@ public class FrameworkController {
         }
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Create Framework", notes = "Method for create a Framework")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Framework created"),
             @ApiResponse(code = 400, message = "Invalid Request"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
-    public ResponseEntity<Framework> insertFramework(@Valid @RequestBody Framework framework) {
+    public ResponseEntity<Framework> insertFramework(@PathVariable("id")Long digitalProfileId , @Valid @RequestBody Framework framework) {
         try {
-            Framework frameworkCreate = frameworkService.save(framework);
-            return new ResponseEntity<>(frameworkCreate, HttpStatus.CREATED);
+            Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(digitalProfileId);
+            if (!digitalProfile.isPresent()){
+                return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
+            }
+            else {
+                framework.setDigitalProfile(digitalProfile.get());
+                Framework newFramework = frameworkService.save(framework);
+                return ResponseEntity.status(HttpStatus.CREATED).body(newFramework);
+            }
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -113,4 +127,27 @@ public class FrameworkController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "/digitalProfile/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search Framework by Digital Profile Id", notes = "Method for find a Framework by Digital Profile id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Framework found by Digital Profile Id"),
+            @ApiResponse(code = 404, message = "Framework Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<Framework>> findFrameworkByDigitalProfileId(@PathVariable("id") Long digitalProfileId){
+        try {
+            Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(digitalProfileId);
+            if (!digitalProfile.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                List<Framework> frameworks = frameworkService.findByDigitalProfileId(digitalProfileId);
+                return new ResponseEntity<>(frameworks, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

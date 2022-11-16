@@ -9,23 +9,11 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "developer")
+@Table(name = "developers")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-
-public class Developer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private User user;
-
-    public void setUser_id(Long user_id) {
-        this.user = new User();
-        this.user.setId(user_id);
+public class Developer extends User {
+    public Developer(Long id, String firstName, String lastName, String email, String phone, String password, String role, String description, String image, String bannerImage) {
+        super(id, firstName, lastName, email, phone, password, role, description, image, bannerImage);
     }
 }
