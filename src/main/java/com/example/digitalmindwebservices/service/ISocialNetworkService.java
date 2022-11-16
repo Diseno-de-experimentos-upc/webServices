@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface ISocialNetworkService extends CrudService<SocialNetwork> {
     List<SocialNetwork> findSocialNetworkByName(String name_social_network) throws Exception;
+
+    List<SocialNetwork> findByUserId(Long id) throws Exception;
 }

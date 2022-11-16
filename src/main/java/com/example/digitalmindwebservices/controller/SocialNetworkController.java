@@ -113,6 +113,32 @@ public class SocialNetworkController {
         }
     }
 
+    //find social networks by user id
+    @GetMapping(value = "/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "List social Network by user id", notes = "Method to list social Network filtered by user id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Social Network founds by user id"),
+            @ApiResponse(code = 404, message = "Social Network Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<SocialNetwork>> findSocialNetworkByUserId(@PathVariable("id") Long id){
+        try {
+            Optional<User> user = userService.getById(id);
+            if(!user.isPresent())
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            else{
+                List<SocialNetwork> socialNetworks = socialNetworkService.findByUserId(id);
+                if(socialNetworks.size()>0)
+                    return new ResponseEntity<>(socialNetworks, HttpStatus.OK);
+                else
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Update Data of Social Network", notes = "Method to update a Social Network")
     @ApiResponses({

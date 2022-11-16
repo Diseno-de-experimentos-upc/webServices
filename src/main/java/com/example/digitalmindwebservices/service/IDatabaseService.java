@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface IDatabaseService extends CrudService<Database> {
 
-    List<Database> findByDigitalProfileId(Long id);
+    List<Database> findByDigitalProfileId(Long id) throws Exception;
 }

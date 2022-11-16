@@ -46,12 +46,12 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User findByEmail(String email) {
+    public User findByEmail(String email) throws Exception {
         return userRepository.findByEmail(email);
     }
 
     @Override
-    public List<User> findByFirstName(String firstName) {
+    public List<User> findByFirstName(String firstName) throws Exception {
         return userRepository.findByFirstName(firstName);
     }
 

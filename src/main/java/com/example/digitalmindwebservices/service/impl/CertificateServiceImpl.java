@@ -42,7 +42,7 @@ public class CertificateServiceImpl implements ICertificateService {
     }
 
     @Override
-    public List<Certificate> findByEducationId(Long id) {
+    public List<Certificate> findByEducationId(Long id) throws Exception {
         return certificateRepository.findByEducationId(id);
     }
 }

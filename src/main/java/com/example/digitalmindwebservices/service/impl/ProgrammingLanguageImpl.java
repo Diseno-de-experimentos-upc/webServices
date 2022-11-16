@@ -40,7 +40,7 @@ public class ProgrammingLanguageImpl implements IProgrammingLanguageService {
     }
 
     @Override
-    public List<ProgrammingLanguage> findByDigitalProfileId(Long id) {
+    public List<ProgrammingLanguage> findByDigitalProfileId(Long id) throws Exception {
         return programmingLanguageRepository.findByDigitalProfileId(id);
     }
 }

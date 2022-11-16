@@ -42,7 +42,7 @@ public class EducationServiceImpl implements IEducationService {
     }
 
     @Override
-    public Optional<Education> findByDigitalProfileId(Long id) {
+    public Optional<Education> findByDigitalProfileId(Long id) throws Exception {
         return educationRepository.findByDigitalProfileId(id);
     }
 }

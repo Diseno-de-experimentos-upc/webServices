@@ -41,7 +41,7 @@ public class DatabaseServiceImpl implements IDatabaseService {
     }
 
     @Override
-    public List<Database> findByDigitalProfileId(Long id) {
+    public List<Database> findByDigitalProfileId(Long id) throws Exception {
         return databaseRepository.findByDigitalProfileId(id);
     }
 }

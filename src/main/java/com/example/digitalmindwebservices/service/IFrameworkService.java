@@ -5,5 +5,5 @@ import com.example.digitalmindwebservices.entities.Framework;
 import java.util.List;
 
 public interface IFrameworkService extends CrudService<Framework> {
-    List<Framework> findByDigitalProfileId(Long id);
+    List<Framework> findByDigitalProfileId(Long id) throws Exception;
 }
