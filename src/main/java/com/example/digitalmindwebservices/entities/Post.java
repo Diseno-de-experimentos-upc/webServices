@@ -8,6 +8,4 @@ public class Post {
     private String description;
     private String imageUrl;
     private Date date;
-
-
 }

@@ -15,9 +15,9 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/developers")
-@CrossOrigin(origins = "*")
 @Api(tags = "Developers", value = "Web Service RESTFul of Developers")
 public class DeveloperController {
     private final IDeveloperService developerService;

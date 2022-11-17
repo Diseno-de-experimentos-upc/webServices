@@ -18,9 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/frameworks")
-@CrossOrigin(origins = "*")
 @Api(tags = "Frameworks", value = "Web Service RESTFul of Frameworks")
 public class FrameworkController {
     private final IFrameworkService frameworkService;

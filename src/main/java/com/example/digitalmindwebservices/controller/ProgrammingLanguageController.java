@@ -1,8 +1,6 @@
 package com.example.digitalmindwebservices.controller;
 
-import com.example.digitalmindwebservices.entities.DigitalProfile;
-import com.example.digitalmindwebservices.entities.ProgrammingLanguage;
-import com.example.digitalmindwebservices.entities.Project;
+import com.example.digitalmindwebservices.entities.*;
 import com.example.digitalmindwebservices.service.IDigitalProfileService;
 import com.example.digitalmindwebservices.service.IProgrammingLanguageService;
 import io.swagger.annotations.Api;
@@ -18,10 +16,10 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/programmingLanguages")
 @Api(tags = "Programming Languages", value = "Web Service RESTFul of Programming Languages")
-@CrossOrigin(origins = "*")
 public class ProgrammingLanguageController {
     private final IProgrammingLanguageService programmingLanguageService;
     private final IDigitalProfileService digitalProfileService;
@@ -66,17 +64,23 @@ public class ProgrammingLanguageController {
         }
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id_digital_profile}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Create Programming Language", notes = "Method for create a Programming Language")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Programming Language created"),
             @ApiResponse(code = 400, message = "Programming Language Not Created"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
-    public ResponseEntity<ProgrammingLanguage> createProgrammingLanguage(@Valid @RequestBody ProgrammingLanguage programmingLanguage){
+    public ResponseEntity<ProgrammingLanguage> createProgrammingLanguage( @PathVariable("id_digital_profile") Long id, @Valid @RequestBody ProgrammingLanguage programmingLanguage){
         try {
-            ProgrammingLanguage programmingLanguageNew = programmingLanguageService.save(programmingLanguage);
-            return new ResponseEntity<>(programmingLanguageNew, HttpStatus.CREATED);
+            Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(id);
+            if (!digitalProfile.isPresent())
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            else{
+                programmingLanguage.setDigitalProfile(digitalProfile.get());
+                ProgrammingLanguage newProgrammingLanguage = programmingLanguageService.save(programmingLanguage);
+                return new ResponseEntity<>(newProgrammingLanguage, HttpStatus.CREATED);
+            }
 
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
