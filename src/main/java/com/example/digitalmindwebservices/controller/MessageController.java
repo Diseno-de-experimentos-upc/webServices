@@ -156,4 +156,24 @@ public class MessageController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "/LastMessageCompany", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get Last Message", notes = "Method for get the last Message")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Last Message Found"),
+            @ApiResponse(code = 404, message = "Last Message Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<Message>> getLastMessageCompany(@PathVariable(value = "userId") Long userId){
+        try {
+            List<Message> Lastmessages = messageService.findLastMessageCompany(userId);
+            Lastmessages = Lastmessages.stream().sorted((m1, m2) -> m2.getId().compareTo(m1.getId())).collect(Collectors.toList());
+            if(Lastmessages.size()>0)
+                return new ResponseEntity<>(Lastmessages, HttpStatus.OK);
+            else
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

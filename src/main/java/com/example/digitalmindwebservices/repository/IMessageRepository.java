@@ -11,5 +11,8 @@ import java.util.List;
 @Repository
 public interface IMessageRepository extends JpaRepository<Message, Long> {
     @Query(value = "SELECT DISTINCT ON (lastMessage.emitter_id)* FROM (SELECT * FROM messages m WHERE receiver_id =:userId ORDER BY id DESC) AS lastMessage", nativeQuery = true)
-   List<Message> findLastMessageDeveloper(@Param("userId") long userId);
+    List<Message> findLastMessageDeveloper(@Param("userId") long userId);
+
+    @Query(value = "SELECT DISTINCT ON (lastMessage.receiver_id)* FROM (SELECT * FROM messages m WHERE emitter_id =:userId ORDER BY id DESC) AS lastMessage;", nativeQuery = true)
+    List<Message> findLastMessageCompany(@Param("userId") long userId);
 }
