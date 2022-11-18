@@ -10,4 +10,5 @@ import java.util.List;
 public interface IProgrammingLanguageRepository extends JpaRepository<ProgrammingLanguage, Long> {
 
     List<ProgrammingLanguage> findByDigitalProfileId(Long id);
+    List<ProgrammingLanguage> findProgrammingLanguagesByName(String name);
 }

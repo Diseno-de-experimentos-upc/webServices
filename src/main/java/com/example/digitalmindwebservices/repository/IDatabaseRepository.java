@@ -9,5 +9,5 @@ import java.util.List;
 public interface IDatabaseRepository extends JpaRepository<Database, Long> {
 
     List<Database> findByDigitalProfileId(Long id);
-
+    List<Database> findDatabasesByName(String name);
 }
