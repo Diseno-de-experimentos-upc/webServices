@@ -40,4 +40,14 @@ public class MessageServiceImpl implements IMessageService {
     public Optional<Message> getById(Long id) throws Exception {
         return messageRepository.findById(id);
     }
+
+    @Override
+    public List<Message> findLastMessageDeveloper(long id) throws Exception {
+        return messageRepository.findLastMessageDeveloper(id);
+    }
+
+    @Override
+    public List<Message> findLastMessageCompany(long id) throws Exception {
+        return messageRepository.findLastMessageCompany(id);
+    }
 }
