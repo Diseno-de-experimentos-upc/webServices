@@ -172,7 +172,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping(value = "/searchByFrameworkAndProgrammingLanguageAndDatabase/{framework}/{programmingLanguage}/{database}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/searchByFrameworkAndProgrammingLanguageAndDatabase/{framework}&{programmingLanguage}&{database}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Search User by Framework, Programming Language and Database", notes = "Method for find a User by Framework, Programming Language and Database")
     @ApiResponses({
             @ApiResponse(code = 200, message = "User found by Framework, Programming Language and Database"),

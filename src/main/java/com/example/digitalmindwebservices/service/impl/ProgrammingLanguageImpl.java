@@ -48,4 +48,9 @@ public class ProgrammingLanguageImpl implements IProgrammingLanguageService {
     public List<ProgrammingLanguage> findByName(String name) throws Exception {
         return programmingLanguageRepository.findProgrammingLanguagesByName(name);
     }
+
+    @Override
+    public List<ProgrammingLanguage> findByDeveloperId(Long id) throws Exception {
+        return programmingLanguageRepository.findProgrammingLanguagesByUserId(id);
+    }
 }
