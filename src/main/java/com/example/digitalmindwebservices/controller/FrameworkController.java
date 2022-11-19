@@ -1,10 +1,8 @@
 package com.example.digitalmindwebservices.controller;
 
-import com.example.digitalmindwebservices.entities.Database;
-import com.example.digitalmindwebservices.entities.DigitalProfile;
-import com.example.digitalmindwebservices.entities.Framework;
-import com.example.digitalmindwebservices.entities.ProgrammingLanguage;
+import com.example.digitalmindwebservices.entities.*;
 import com.example.digitalmindwebservices.service.IDigitalProfileService;
+import com.example.digitalmindwebservices.service.IDeveloperService;
 import com.example.digitalmindwebservices.service.IFrameworkService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,16 +16,18 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/frameworks")
-@CrossOrigin(origins = "*")
 @Api(tags = "Frameworks", value = "Web Service RESTFul of Frameworks")
 public class FrameworkController {
     private final IFrameworkService frameworkService;
     private final IDigitalProfileService digitalProfileService;
-    public FrameworkController(IFrameworkService frameworkService, IDigitalProfileService digitalProfileService) {
+    private final IDeveloperService developerService;
+    public FrameworkController(IFrameworkService frameworkService, IDigitalProfileService digitalProfileService, IDeveloperService developerService) {
         this.frameworkService = frameworkService;
         this.digitalProfileService = digitalProfileService;
+        this.developerService = developerService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -143,6 +143,28 @@ public class FrameworkController {
             }
             else {
                 List<Framework> frameworks = frameworkService.findByDigitalProfileId(digitalProfileId);
+                return new ResponseEntity<>(frameworks, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/developer/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search Framework by Developer Id", notes = "Method for find a Framework by Developer id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Framework found by Developer Id"),
+            @ApiResponse(code = 404, message = "Framework Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<Framework>> findFrameworkByDeveloperId(@PathVariable("id") Long developerId){
+        try {
+            Optional<Developer> developer = developerService.getById(developerId);
+            if (!developer.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                List<Framework> frameworks = frameworkService.findByDeveloperId(developerId);
                 return new ResponseEntity<>(frameworks, HttpStatus.OK);
             }
         } catch (Exception e) {

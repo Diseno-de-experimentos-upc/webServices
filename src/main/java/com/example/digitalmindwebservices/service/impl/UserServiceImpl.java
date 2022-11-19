@@ -55,5 +55,13 @@ public class UserServiceImpl implements IUserService {
         return userRepository.findByFirstName(firstName);
     }
 
+    @Override
+    public List<User> findByRole(String role) {
+        return userRepository.findByRole(role);
+    }
 
+    @Override
+    public List<User> findDeveloperByFrameworkAndProgrammingLanguageAndDatabase(String framework, String programmingLanguage, String database) throws Exception {
+        return userRepository.findDeveloperByFrameworkAndProgrammingLanguageAndDatabase(framework, programmingLanguage, database);
+    }
 }
