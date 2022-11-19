@@ -69,11 +69,13 @@ public class ProgrammingLanguageController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Create Programming Language", notes = "Method for create a Programming Language")
+ 
+    @PostMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Create a new Programming Language", notes = "Method for create a new Programming Language")
+ 
     @ApiResponses({
             @ApiResponse(code = 201, message = "Programming Language created"),
-            @ApiResponse(code = 400, message = "Programming Language Not Created"),
+            @ApiResponse(code = 404, message = "Programming Language Not Found"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
     public ResponseEntity<ProgrammingLanguage> createProgrammingLanguage(@PathVariable("id") Long id, @Valid @RequestBody ProgrammingLanguage programmingLanguage){
@@ -81,8 +83,8 @@ public class ProgrammingLanguageController {
             Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(id);
             if(digitalProfile.isPresent()){
                 programmingLanguage.setDigitalProfile(digitalProfile.get());
-                ProgrammingLanguage programmingLanguageNew = programmingLanguageService.save(programmingLanguage);
-                return new ResponseEntity<>(programmingLanguageNew, HttpStatus.CREATED);
+                ProgrammingLanguage programmingLanguage1 = programmingLanguageService.save(programmingLanguage);
+                return new ResponseEntity<>(programmingLanguage1, HttpStatus.CREATED);
             }else{
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
