@@ -18,10 +18,10 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/programmingLanguages")
 @Api(tags = "Programming Languages", value = "Web Service RESTFul of Programming Languages")
-@CrossOrigin(origins = "*")
 public class ProgrammingLanguageController {
     private final IProgrammingLanguageService programmingLanguageService;
     private final IDigitalProfileService digitalProfileService;
@@ -66,18 +66,24 @@ public class ProgrammingLanguageController {
         }
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Create Programming Language", notes = "Method for create a Programming Language")
+   //create a new Programming Language with especific Digital Profile
+    @PostMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Create a new Programming Language", notes = "Method for create a new Programming Language")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Programming Language created"),
-            @ApiResponse(code = 400, message = "Programming Language Not Created"),
+            @ApiResponse(code = 404, message = "Programming Language Not Found"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
-    public ResponseEntity<ProgrammingLanguage> createProgrammingLanguage(@Valid @RequestBody ProgrammingLanguage programmingLanguage){
+    public ResponseEntity<ProgrammingLanguage> createProgrammingLanguage(@PathVariable("id") Long id, @Valid @RequestBody ProgrammingLanguage programmingLanguage){
         try {
-            ProgrammingLanguage programmingLanguageNew = programmingLanguageService.save(programmingLanguage);
-            return new ResponseEntity<>(programmingLanguageNew, HttpStatus.CREATED);
-
+            Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(id);
+            if(digitalProfile.isPresent()){
+                programmingLanguage.setDigitalProfile(digitalProfile.get());
+                ProgrammingLanguage programmingLanguage1 = programmingLanguageService.save(programmingLanguage);
+                return new ResponseEntity<>(programmingLanguage1, HttpStatus.CREATED);
+            }else{
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
