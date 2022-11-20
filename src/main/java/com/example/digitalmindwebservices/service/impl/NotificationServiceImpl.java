@@ -40,4 +40,14 @@ public class NotificationServiceImpl implements INotificationService {
     public Optional<Notification> getById(Long id) throws Exception {
         return notificationRepository.findById(id);
     }
+
+    @Override
+    public List<Notification> findLastNotificationDeveloper(long id) throws Exception {
+        return notificationRepository.findLastNotificationDeveloper(id);
+    }
+
+    @Override
+    public List<Notification> findLastNotificationCompany(long id) throws Exception {
+        return notificationRepository.findLastNotificationCompany(id);
+    }
 }

@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/users/{userId}/notifications")
 @Api(tags = "Notifications", value = "Web Service RESTFul of Notifications")
@@ -32,18 +34,19 @@ public class NotificationController {
             this.userService = userService;
         }
 
-        @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+        @GetMapping(produces= MediaType.APPLICATION_JSON_VALUE)
         @ApiOperation(value = "List all Notifications", notes = "Method to list all Notifications")
         @ApiResponses({
                 @ApiResponse(code = 200, message = "All Notifications founds"),
                 @ApiResponse(code = 404, message = "Notifications Not Found"),
                 @ApiResponse(code = 501, message = "Internal Server Error")
         })
-        public ResponseEntity<List<Notification>> findAllNotifications(@PathVariable("userId")Long userId){
+        public ResponseEntity<List<Notification>> findAllNotifications(@PathVariable("userId")Long userId) {
             try {
                 List<Notification> notifications = notificationService.getAll();
-                Predicate<Notification> byId = notification -> notification.getUser().getId() == userId;
+                Predicate<Notification> byId = notification -> (notification.getReceiver().getId() == userId);
                 notifications = notifications.stream().filter(byId).collect(Collectors.toList());
+                notifications = notifications.stream().sorted((n1, n2) -> n2.getId().compareTo(n1.getId())).collect(Collectors.toList());
                 if(notifications.size()>0)
                     return new ResponseEntity<>(notifications, HttpStatus.OK);
                 else
@@ -53,66 +56,61 @@ public class NotificationController {
             }
         }
 
-        @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+        @GetMapping(value = "/{receiverId}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
         @ApiOperation(value = "Search Notification by Id", notes = "Method for find a Notification by id")
         @ApiResponses({
                 @ApiResponse(code = 200, message = "Notification found by Id"),
                 @ApiResponse(code = 404, message = "Notification Not Found"),
                 @ApiResponse(code = 501, message = "Internal Server Error")
         })
-        public ResponseEntity<Notification> findNotificationById(@PathVariable("userId")Long userId, @PathVariable("id")Long id){
+        public ResponseEntity<Notification> findNotificationById(@PathVariable("id")Long id, @PathVariable("receiverId")Long receiverId) {
             try {
                 Optional<Notification> notification = notificationService.getById(id);
-                if(notification.isPresent() && notification.get().getUser().getId() == userId)
-                    return new ResponseEntity<>(notification.get(), HttpStatus.OK);
-                else
+                if(!notification.isPresent())
                     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(notification.get(), HttpStatus.OK);
             } catch (Exception e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+        @SneakyThrows
+        @PostMapping(value="/{receiverId}",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
         @ApiOperation(value = "Create Notification", notes = "Method for create a Notification")
         @ApiResponses({
                 @ApiResponse(code = 201, message = "Notification created"),
                 @ApiResponse(code = 400, message = "Invalid Request"),
                 @ApiResponse(code = 501, message = "Internal Server Error")
         })
-        public ResponseEntity<Notification> createNotification(@PathVariable("userId")Long userId, @Valid @RequestBody Notification notification){
+        public ResponseEntity<Notification> insertNotification(@Valid @RequestBody Notification notification, @PathVariable(value = "userId") Long userId){
+            Optional<User> emitter = userService.getById(userId);
+            notification.setEmitter(emitter.get());
             try {
-                Optional<User> user = userService.getById(userId);
-                if(user.isPresent()){
-                    notification.setUser(user.get());
-                    Notification notificationCreate = notificationService.save(notification);
-                    return new ResponseEntity<>(notificationCreate, HttpStatus.CREATED);
-                }else
-                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                Notification newNotification = notificationService.save(notification);
+                return ResponseEntity.status(HttpStatus.CREATED).body(newNotification);
             } catch (Exception e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+        @SneakyThrows
+        @PutMapping(value="/{id}",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
         @ApiOperation(value = "Update Notification", notes = "Method for update a Notification")
         @ApiResponses({
                 @ApiResponse(code = 200, message = "Notification updated"),
                 @ApiResponse(code = 400, message = "Invalid Request"),
                 @ApiResponse(code = 501, message = "Internal Server Error")
         })
-    public ResponseEntity<Notification> updateNotification(@PathVariable("userId")Long userId, @Valid @RequestBody Notification notification){
+        public ResponseEntity<Notification> updateNotification(@PathVariable("id")Long id, @Valid @RequestBody Notification notification, @PathVariable(value = "userId") Long userId){
+            Optional<User> emitter = userService.getById(userId);
+            notification.setEmitter(emitter.get());
             try {
-                Optional<User> user = userService.getById(userId);
-                if(user.isPresent()){
-                    Optional<Notification> notificationUpdate = notificationService.getById(notification.getId());
-                    if(notificationUpdate.isPresent() && notificationUpdate.get().getUser().getId() == userId){
-                        notification.setUser(user.get());
-                        notificationService.save(notification);
-                        return new ResponseEntity<>(notification, HttpStatus.OK);
-                    }else
-                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-                }else
-                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                Optional<Notification> currentNotification = notificationService.getById(id);
+                if(!currentNotification.isPresent())
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                notification.setId(id);
+                notificationService.save(notification);
+                return new ResponseEntity<>(notification, HttpStatus.OK);
             } catch (Exception e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -125,13 +123,52 @@ public class NotificationController {
                 @ApiResponse(code = 404, message = "Notification Not Found"),
                 @ApiResponse(code = 501, message = "Internal Server Error")
         })
-    public ResponseEntity<Notification> deleteNotification(@PathVariable("userId")Long userId, @PathVariable("id")Long id){
+        public ResponseEntity<Notification> deleteNotification(@PathVariable("id")Long userId, @PathVariable("id")Long id){
             try {
                 Optional<Notification> notificationDelete = notificationService.getById(id);
-                if(notificationDelete.isPresent() && notificationDelete.get().getUser().getId() == userId){
-                    notificationService.delete(id);
-                    return new ResponseEntity<>(HttpStatus.OK);
-                }else
+                if(!notificationDelete.isPresent())
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                notificationService.delete(id);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        @GetMapping(value = "/LastNotificationDeveloper", produces = MediaType.APPLICATION_JSON_VALUE)
+        @ApiOperation(value = "Get Last Notification", notes = "Method for get the last Notification")
+        @ApiResponses({
+                @ApiResponse(code = 200, message = "Notification found"),
+                @ApiResponse(code = 404, message = "Notification Not Found"),
+                @ApiResponse(code = 501, message = "Internal Server Error")
+        })
+        public ResponseEntity<List<Notification>> getLastNotificationDeveloper(@PathVariable("userId")Long userId) {
+            try {
+                List<Notification> Lastnotifications = notificationService.findLastNotificationDeveloper(userId);
+                Lastnotifications = Lastnotifications.stream().sorted((n1, n2) -> n2.getId().compareTo(n1.getId())).collect(Collectors.toList());
+                if (Lastnotifications.size() > 0)
+                    return new ResponseEntity<>(Lastnotifications, HttpStatus.OK);
+                else
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        @GetMapping(value = "/LastNotificationCompany", produces = MediaType.APPLICATION_JSON_VALUE)
+        @ApiOperation(value = "Get Last Notification", notes = "Method for get the last Notification")
+        @ApiResponses({
+                @ApiResponse(code = 200, message = "Notification found"),
+                @ApiResponse(code = 404, message = "Notification Not Found"),
+                @ApiResponse(code = 501, message = "Internal Server Error")
+        })
+        public ResponseEntity<List<Notification>> getLastNotificationCompany(@PathVariable("userId")Long userId) {
+            try {
+                List<Notification> Lastnotifications = notificationService.findLastNotificationCompany(userId);
+                Lastnotifications = Lastnotifications.stream().sorted((n1, n2) -> n2.getId().compareTo(n1.getId())).collect(Collectors.toList());
+                if (Lastnotifications.size() > 0)
+                    return new ResponseEntity<>(Lastnotifications, HttpStatus.OK);
+                else
                     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             } catch (Exception e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
