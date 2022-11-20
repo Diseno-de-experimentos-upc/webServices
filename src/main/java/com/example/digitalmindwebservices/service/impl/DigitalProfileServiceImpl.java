@@ -40,4 +40,9 @@ public class DigitalProfileServiceImpl implements IDigitalProfileService {
     public Optional<DigitalProfile> getById(Long id) throws Exception {
         return digitalProfileRepository.findById(id);
     }
+
+    @Override
+    public Optional<DigitalProfile> findDigitalProfileByDeveloperId(Long id) throws Exception {
+        return digitalProfileRepository.findDigitalProfileByDeveloperId(id);
+    }
 }

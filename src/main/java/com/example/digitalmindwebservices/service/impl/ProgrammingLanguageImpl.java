@@ -38,4 +38,19 @@ public class ProgrammingLanguageImpl implements IProgrammingLanguageService {
     public Optional<ProgrammingLanguage> getById(Long id) throws Exception {
         return programmingLanguageRepository.findById(id);
     }
+
+    @Override
+    public List<ProgrammingLanguage> findByDigitalProfileId(Long id) throws Exception {
+        return programmingLanguageRepository.findByDigitalProfileId(id);
+    }
+
+    @Override
+    public List<ProgrammingLanguage> findByName(String name) throws Exception {
+        return programmingLanguageRepository.findProgrammingLanguagesByName(name);
+    }
+
+    @Override
+    public List<ProgrammingLanguage> findByDeveloperId(Long id) throws Exception {
+        return programmingLanguageRepository.findProgrammingLanguagesByUserId(id);
+    }
 }

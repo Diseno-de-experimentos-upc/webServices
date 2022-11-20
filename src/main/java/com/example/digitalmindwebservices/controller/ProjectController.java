@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/projects")
+@CrossOrigin(origins = "*")
 @Api(tags = "Projects", value = "Web Service RESTFul of Projects")
 public class ProjectController {
 
@@ -71,7 +72,7 @@ public class ProjectController {
         }
     }
 
-    @PostMapping(value = "/{id}" , produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/digitalProfile/{id}" , produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Insert Project", notes = "Method for inserting an Project")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Project created"),
@@ -93,5 +94,51 @@ public class ProjectController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "/digitalProfile/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search Projects by Digital Profile Id", notes = "Method for finding Projects by Digital Profile id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Projects found by Digital Profile Id"),
+            @ApiResponse(code = 404, message = "Projects Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<Project>> findProjectsByDigitalProfileId(@PathVariable("id") Long digitalProfileId){
+        try {
+            Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(digitalProfileId);
+            if (!digitalProfile.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                List<Project> projects = projectService.findByDigitalProfileId(digitalProfileId);
+                return new ResponseEntity<>(projects, HttpStatus.OK);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //delete project by id
+    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Delete Project by Id", notes = "Method for deleting an Project by id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Project deleted by Id"),
+            @ApiResponse(code = 404, message = "Project Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<Project> deleteProjectById(@PathVariable("id") Long id){
+        try {
+            Optional<Project> project = projectService.getById(id);
+            if (!project.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                projectService.delete(id);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }

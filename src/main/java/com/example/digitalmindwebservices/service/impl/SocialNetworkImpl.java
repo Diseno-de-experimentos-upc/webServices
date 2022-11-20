@@ -47,4 +47,9 @@ public class SocialNetworkImpl implements ISocialNetworkService {
         return socialNetworkRepository.findSocialNetworkByName(name_social_network);
     }
 
+    @Override
+    public List<SocialNetwork> findByUserId(Long id) throws Exception {
+        return socialNetworkRepository.findByUserId(id);
+    }
+
 }
