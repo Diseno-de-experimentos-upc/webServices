@@ -34,27 +34,16 @@ public class UserControllerTest {
     @BeforeEach
     void setUp() {
         userList = new ArrayList<>();
-        userList.add(new User(1L, "Juan",
-                "Perez", "juan@gmail.com", "9932932832",
-                "#A987987987", "developer" ,"9932932833"));
-        userList.add(new User(2L, "Maria", "Perez", "maria@gmail.com", "9932932834",
-                "#A917987123", "company" ," I am a user of the system"));
-        userList.add(new User(3L, "Pedro", "Cierto", "pedro@gmail.com", "9932932835",
-                "#A927587187", "developer" ," I am a user of the system"));
-        userList.add(new User(4L, "Luis", "Perez", "luis@gmail.com", "99329328326",
-                "#A937917987", "company" ," I am a user of the system"));
-        userList.add(new User(5L, "Ana", "Perez", "ana@gmail.com", "9932932837",
-                "#A947987987", "developer" ," I am a user of the system"));
-        userList.add(new User(6L, "Luisa", "Perez", "luisa@gmail.com", "9932932838",
-                "#A957987987", "company" ," I am a user of the system"));
-        userList.add(new User(7L, "Jose", "Perez", "jose@gmail.com", "9932932839",
-                "#A967987987", "developer" ," I am a user of the system"));
-        userList.add(new User(8L, "Luis", "Canales", "canales@gmail.com", "9932932830",
-                "#A977987987", "company" ," I am a user of the system"));
-        userList.add(new User(9L, "Luis", "Santos", "santos@gmail.com", "9932932832",
-                "#A987987987", "developer" ," I am a user of the system"));
-        userList.add(new User(10L, "Jorge", "Perez", "jorge@gmail.com", "Av. Monterrico 132",
-                "#A997987987", "company" ," I am a user of the system"));
+        userList.add(new User(1L, "Juan", "Perez", "juan@gmail.com", "993293832",
+                "juan123#", "developer", "I am a developer in java","...", "..."));
+        userList.add(new User(2L, "Luis", "Espiritu", "luis@gmail.com", "993293832",
+                "juan123#", "company", "I am a recruiter in google","...", "..."));
+        userList.add(new User(3L, "Romeo", "Perez", "juan@gmail.com", "993293832",
+                "juan123#", "developer", "I am a developer in java","...", "..."));
+        userList.add(new User(4L, "Juan", "Aguirre", "juan@gmail.com", "993293832",
+                "juan123#", "Company", "I am a recruiter personal in amazon","...", "..."));
+        userList.add(new User(5L, "Juan", "Perez", "juan@gmail.com", "993293832",
+                "juan123#", "developer", "I am a developer in java","...", "..."));
     }
 
     @Test
@@ -67,7 +56,7 @@ public class UserControllerTest {
     void findUserByIdTest() throws Exception {
         Long id = 1L;
         User user = new User(1L, "Juan",
-                "Perez", "juan@gmail.com", "993293832","987987987", "developer" ," I am a user of the system");
+                "Perez", "juan@gmail.com", "993293832","987987987", "developer" ," I am a user of the system", "...", "...");
         given(userService.getById(id)).willReturn(Optional.of(user));
         mockMvc.perform(get("/api/users/{id}", id)).andExpect(status().isOk());
     }
@@ -76,7 +65,7 @@ public class UserControllerTest {
     void findUserByEmail() throws Exception {
         String email = "juan@gmail.com";
         User user = new User(1L, "Juan",
-                "Perez", "juansito@gmail.com", "juan#123","987987987", "developer" ," I am a user of the system");
+                "Perez", "juansito@gmail.com", "juan#123","987987987", "developer" ," I am a user of the system", "...", "...");
         given(userService.findByEmail(email)).willReturn(user);
         mockMvc.perform(get("/api/users/searchByEmail/{email}", email)).andExpect(status().isOk());
     }
@@ -91,7 +80,7 @@ public class UserControllerTest {
     @Test
     void insertUserTest() throws Exception {
         User user = new User(1L, "Juan",
-                "Perez", "juan@gmail.com", "Juan#Az", "987987987", "developer" ," I am a user of the system");
+                "Perez", "juan@gmail.com", "Juan#Az", "987987987", "developer" ," I am a user of the system, ", "...", "...");
         mockMvc.perform(post("/api/users")
                 .content(asJsonString(user))
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -103,7 +92,7 @@ public class UserControllerTest {
     void updateUserTest() throws Exception {
         Long id = 1L;
         User user = new User(1L, "Juan",
-                "Perez", "juanito@gmail.com", "Juan#Az", "987987987", "developer", " I am a user of the system");
+                "Perez", "juanito@gmail.com", "Juan#Az", "987987987", "developer", " I am a user of the system", "...", "...");
         given(userService.getById(id)).willReturn(Optional.of(user));
         mockMvc.perform(put("/api/users/{id}", id)
                 .content(asJsonString(user))
@@ -115,7 +104,7 @@ public class UserControllerTest {
     void deleteUserTest() throws Exception {
         Long id = 1L;
         User user = new User(1L, "Juan",
-                "Perez", "juan@gmail.com", "Juan#Az", "987987987", "developer", " I am a user of the system");
+                "Perez", "juan@gmail.com", "Juan#Az", "987987987", "developer", " I am a user of the system", "...", "...");
         given(userService.getById(id)).willReturn(Optional.of(user));
         mockMvc.perform(delete("/api/users/{id}", id)).andExpect(status().isOk());
     }
