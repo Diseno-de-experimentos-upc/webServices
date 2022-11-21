@@ -1,5 +1,6 @@
 package com.example.digitalmindwebservices.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,9 @@ public class DigitalProfile implements Serializable {
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "developer_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Developer developer;
 }

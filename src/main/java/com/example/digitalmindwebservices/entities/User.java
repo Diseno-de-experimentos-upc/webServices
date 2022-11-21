@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +32,10 @@ public class User {
     private String password;
     @Column (name = "role", nullable = false, length = 50)
     private String role;
-    @Column (name = "description", nullable = true, length = 500)
+    @Column (name = "description", nullable = false, length = 500)
     private String description;
+    @Column (name = "image", nullable = false, length = 500)
+    private String image;
+    @Column(name = "banner_image", nullable = false, length = 500)
+    private String bannerImage;
 }

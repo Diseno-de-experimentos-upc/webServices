@@ -29,7 +29,7 @@ public class UserServiceImplTest {
     @Test
     public void saveTest(){
         User user = new User(1L, "Juan", "Perez", "juan@gmail.com",
-                "993293832", "juan123#", "developer", "I am a developer in java");
+                "993293832", "juan123#", "developer", "I am a developer in java", "...", "...");
         given(userRepository.save(user)).willReturn(user);
 
         User savedUser = null;
@@ -53,15 +53,15 @@ public class UserServiceImplTest {
     public void getAllTest() throws Exception {
         List<User> list = new ArrayList<>();
         list.add(new User(1L, "Juan", "Perez", "juan@gmail.com", "993293832",
-                "juan123#", "developer", "I am a developer in java"));
+                "juan123#", "developer", "I am a developer in java","...", "..."));
         list.add(new User(2L, "Luis", "Espiritu", "luis@gmail.com", "993293832",
-                "juan123#", "company", "I am a recruiter in google"));
+                "juan123#", "company", "I am a recruiter in google","...", "..."));
         list.add(new User(3L, "Romeo", "Perez", "juan@gmail.com", "993293832",
-                "juan123#", "developer", "I am a developer in java"));
+                "juan123#", "developer", "I am a developer in java","...", "..."));
         list.add(new User(4L, "Juan", "Aguirre", "juan@gmail.com", "993293832",
-                "juan123#", "Company", "I am a recruiter personal in amazon"));
+                "juan123#", "Company", "I am a recruiter personal in amazon","...", "..."));
         list.add(new User(5L, "Juan", "Perez", "juan@gmail.com", "993293832",
-                "juan123#", "developer", "I am a developer in java"));
+                "juan123#", "developer", "I am a developer in java","...", "..."));
         given(userRepository.findAll()).willReturn(list);
         List<User> listExpected = userService.getAll();
         assertEquals(list, listExpected);
@@ -71,7 +71,7 @@ public class UserServiceImplTest {
     public void getByIdTest() throws Exception {
         Long id = 1L;
         User user = new User(1L, "Juan", "Perez", "juan@gmail.com", "993293832",
-                "juan123#", "developer", "I am a developer in java");
+                "juan123#", "developer", "I am a developer in java","...", "...");
         given(userRepository.findById(id)).willReturn(java.util.Optional.of(user));
         Optional<User> userExpected = userService.getById(id);
         assertEquals(Optional.of(user), userExpected);
@@ -81,7 +81,7 @@ public class UserServiceImplTest {
     public void findByEmailTest() throws Exception {
         String email = "juan@gmail.com";
         User user = new User(1L, "Juan", "Perez", "juan@gmail.com", "993293832",
-                "juan123#", "developer", "I am a developer in java");
+                "juan123#", "developer", "I am a developer in java","...", "...");
         given(userRepository.findByEmail(email)).willReturn(user);
         User userExpected = userService.findByEmail(email);
         assertThat(userExpected).isNotNull();
@@ -93,15 +93,15 @@ public class UserServiceImplTest {
         String firstName = "Juan";
         List<User> list = new ArrayList<>();
         list.add(new User(1L, "Juan", "Perez", "juan@gmail.com", "993293832",
-                "juan123#", "developer", "I am a developer in java"));
+                "juan123#", "developer", "I am a developer in java","...", "..."));
         list.add(new User(2L, "Luis", "Espiritu", "luis@gmail.com", "993293832",
-                "juan123#", "company", "I am a recruiter in google"));
+                "juan123#", "company", "I am a recruiter in google","...", "..."));
         list.add(new User(3L, "Romeo", "Perez", "juan@gmail.com", "993293832",
-                "juan123#", "developer", "I am a developer in java"));
+                "juan123#", "developer", "I am a developer in java","...", "..."));
         list.add(new User(4L, "Juan", "Aguirre", "juan@gmail.com", "993293832",
-                "juan123#", "Company", "I am a recruiter personal in amazon"));
+                "juan123#", "Company", "I am a recruiter personal in amazon","...", "..."));
         list.add(new User(5L, "Juan", "Perez", "juan@gmail.com", "993293832",
-                "juan123#", "developer", "I am a developer in java"));
+                "juan123#", "developer", "I am a developer in java","...", "..."));
         given(userRepository.findByFirstName(firstName)).willReturn(list);
         List<User> listExpected = userService.findByFirstName(firstName);
         assertEquals(list, listExpected);

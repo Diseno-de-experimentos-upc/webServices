@@ -40,4 +40,9 @@ public class StudyCenterServiceImpl implements IStudyCenterService {
     public Optional<StudyCenter> getById(Long id) throws Exception {
         return studyCenterRepository.findById(id);
     }
+
+    @Override
+    public List<StudyCenter> findByEducationId(Long id) throws Exception {
+        return studyCenterRepository.findByEducationId(id);
+    }
 }
