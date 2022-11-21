@@ -20,6 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/socialNetworks")
+@CrossOrigin(origins = "*")
 @Api(tags = "SocialNetworks", value = "Web Service RESTFul of Social Networks")
 public class SocialNetworkController {
 
@@ -89,27 +90,54 @@ public class SocialNetworkController {
         }
     }
 
-    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Register Social Network", notes = "Method to register a Social Network")
+    //insert a new social network by user id
+    @PostMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Insert a new Social Network", notes = "Method to insert a new Social Network")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Social Network created"),
-            @ApiResponse(code = 400, message = "Invalid Request"),
+            @ApiResponse(code = 404, message = "Social Network Not Found"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
     public ResponseEntity<SocialNetwork> insertSocialNetwork(@PathVariable("id") Long id, @Valid @RequestBody SocialNetwork socialNetwork){
         try {
-            Optional<User> user = userService.getById(id);//1 ->Henry
-            if(user.isPresent()){//Se encontro a henry
-                socialNetwork.setUser(user.get()); //Asignamos a la red social el usuario
+            Optional<User> user = userService.getById(id);
+            if(!user.isPresent())
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            else{
+                socialNetwork.setUser(user.get());
                 SocialNetwork socialNetworkNew = socialNetworkService.save(socialNetwork);
                 return ResponseEntity.status(HttpStatus.CREATED).body(socialNetworkNew);
             }
-            else
-                return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    //find social networks by user id
+    @GetMapping(value = "/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "List social Network by user id", notes = "Method to list social Network filtered by user id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Social Network founds by user id"),
+            @ApiResponse(code = 404, message = "Social Network Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<SocialNetwork>> findSocialNetworkByUserId(@PathVariable("id") Long id){
+        try {
+            Optional<User> user = userService.getById(id);
+            if(!user.isPresent())
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            else{
+                List<SocialNetwork> socialNetworks = socialNetworkService.findByUserId(id);
+                if(socialNetworks.size()>0)
+                    return new ResponseEntity<>(socialNetworks, HttpStatus.OK);
+                else
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Update Data of Social Network", notes = "Method to update a Social Network")

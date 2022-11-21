@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/users/{userId}/messages")
 @Api(tags = "Messages", value = "Web Service RESTFul of Messages")
@@ -34,18 +35,20 @@ public class MessageController {
         this.userService = userService;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{receiverId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List all Messages", notes = "Method to list all Messages")
     @ApiResponses({
             @ApiResponse(code = 200, message = "All Messages founds"),
             @ApiResponse(code = 404, message = "Messages Not Found"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
-    public ResponseEntity<List<Message>> findAllMessages(@PathVariable("userId")Long userId){
+    public ResponseEntity<List<Message>> findAllMessages(@PathVariable("userId")Long userId, @PathVariable("receiverId")Long receiverId) {
         try {
             List<Message> messages = messageService.getAll();
-            Predicate<Message> byId = message -> message.getEmitter().getId() == userId;
+            Predicate<Message> byId = message -> (message.getEmitter().getId() == userId && message.getReceiver().getId() == receiverId)
+                    || ( message.getEmitter().getId() == receiverId && message.getReceiver().getId() == userId);
             messages = messages.stream().filter(byId).collect(Collectors.toList());
+            messages = messages.stream().sorted((m1, m2) -> m1.getId().compareTo(m2.getId())).collect(Collectors.toList());
             if(messages.size()>0)
                 return new ResponseEntity<>(messages, HttpStatus.OK);
             else
@@ -55,14 +58,14 @@ public class MessageController {
         }
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{receiverId}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Search Message by Id", notes = "Method for find a Message by id")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Message found by Id"),
             @ApiResponse(code = 404, message = "Message Not Found"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
-    public ResponseEntity<Message> findMessageById(@PathVariable("id")Long id){
+    public ResponseEntity<Message> findMessageById(@PathVariable("id")Long id, @PathVariable("receiverId")Long receiverId){
         try {
             Optional<Message> message = messageService.getById(id);
             if(!message.isPresent())
@@ -74,7 +77,7 @@ public class MessageController {
     }
 
     @SneakyThrows
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{receiverId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Create Message", notes = "Method for create a Message")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Message created"),
@@ -134,4 +137,43 @@ public class MessageController {
         }
     }
 
+    @GetMapping(value = "/LastMessageDeveloper", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get Last Message", notes = "Method for get the last Message")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Last Message Found"),
+            @ApiResponse(code = 404, message = "Last Message Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<Message>> getLastMessageDeveloper(@PathVariable(value = "userId") Long userId){
+        try {
+            List<Message> Lastmessages = messageService.findLastMessageDeveloper(userId);
+            Lastmessages = Lastmessages.stream().sorted((m1, m2) -> m2.getId().compareTo(m1.getId())).collect(Collectors.toList());
+            if(Lastmessages.size()>0)
+                return new ResponseEntity<>(Lastmessages, HttpStatus.OK);
+            else
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/LastMessageCompany", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get Last Message", notes = "Method for get the last Message")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Last Message Found"),
+            @ApiResponse(code = 404, message = "Last Message Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<Message>> getLastMessageCompany(@PathVariable(value = "userId") Long userId){
+        try {
+            List<Message> Lastmessages = messageService.findLastMessageCompany(userId);
+            Lastmessages = Lastmessages.stream().sorted((m1, m2) -> m2.getId().compareTo(m1.getId())).collect(Collectors.toList());
+            if(Lastmessages.size()>0)
+                return new ResponseEntity<>(Lastmessages, HttpStatus.OK);
+            else
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

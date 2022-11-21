@@ -46,17 +46,22 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User findByEmail(String email) {
+    public User findByEmail(String email) throws Exception {
         return userRepository.findByEmail(email);
     }
 
     @Override
-    public List<User> findByFirstName(String firstName) {
+    public List<User> findByFirstName(String firstName) throws Exception {
         return userRepository.findByFirstName(firstName);
     }
 
     @Override
     public List<User> findByRole(String role) {
         return userRepository.findByRole(role);
+    }
+
+    @Override
+    public List<User> findDeveloperByFrameworkAndProgrammingLanguageAndDatabase(String framework, String programmingLanguage, String database) throws Exception {
+        return userRepository.findDeveloperByFrameworkAndProgrammingLanguageAndDatabase(framework, programmingLanguage, database);
     }
 }

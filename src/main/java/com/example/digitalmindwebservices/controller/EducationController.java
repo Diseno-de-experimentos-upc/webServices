@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/educations")
+@CrossOrigin(origins = "*")
 @Api(value = "Web Service RESTFul of Educations", tags = "Educations")
 public class EducationController {
 
@@ -83,15 +84,38 @@ public class EducationController {
             Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(idDigitalProfile);
             if(!digitalProfile.isPresent())
                 return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
-            else {
+
+            //see if this digitalProfile already has an education
+            Optional<Education> educationOptional = educationService.findByDigitalProfileId(idDigitalProfile);
+            if(educationOptional.isPresent())
+                return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
+
                 education.setDigitalProfile(digitalProfile.get());
                 Education newEducation = educationService.save(education);
                 return ResponseEntity.status(HttpStatus.CREATED).body(newEducation);
-            }
-
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    @GetMapping(value = "/digitalProfile/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search Education by Digital Profile", notes = "Method for finding an Education by Digital Profile")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Education found by Digital Profile"),
+            @ApiResponse(code = 404, message = "Education Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<Education> findEducationByDigitalProfile(@PathVariable("id") Long id){
+        try {
+            Optional<Education> education = educationService.findByDigitalProfileId(id);
+            if (!education.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                return new ResponseEntity<>(education.get(), HttpStatus.OK);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
