@@ -73,7 +73,7 @@ public class DigitalProfileController {
     }
 
    //post method to create a new digital profile by developer id
-    @PostMapping(value = "/{developer_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{developer_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Create a new Digital Profile", notes = "Method for creating a new Digital Profile")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Digital Profile created successfully"),

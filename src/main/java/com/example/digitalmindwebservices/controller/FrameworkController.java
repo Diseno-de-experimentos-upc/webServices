@@ -74,11 +74,11 @@ public class FrameworkController {
             @ApiResponse(code = 400, message = "Invalid Request"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
-    public ResponseEntity<Framework> insertFramework(@PathVariable("id")Long digitalProfileId , @Valid @RequestBody Framework framework) {
+    public ResponseEntity<Framework> insertFramework(@PathVariable("id")Long digitalProfileId ,@Valid @RequestBody Framework framework) {
         try {
             Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(digitalProfileId);
             if (!digitalProfile.isPresent()){
-                return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             else {
                 framework.setDigitalProfile(digitalProfile.get());
