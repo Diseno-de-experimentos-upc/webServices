@@ -1,6 +1,9 @@
 package com.example.digitalmindwebservices.controller;
 
-import com.example.digitalmindwebservices.entities.*;
+import com.example.digitalmindwebservices.entities.Developer;
+import com.example.digitalmindwebservices.entities.DigitalProfile;
+import com.example.digitalmindwebservices.entities.ProgrammingLanguage;
+import com.example.digitalmindwebservices.service.IDeveloperService;
 import com.example.digitalmindwebservices.service.IDigitalProfileService;
 import com.example.digitalmindwebservices.service.IProgrammingLanguageService;
 import io.swagger.annotations.Api;
@@ -20,12 +23,15 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/programmingLanguages")
 @Api(tags = "Programming Languages", value = "Web Service RESTFul of Programming Languages")
+
 public class ProgrammingLanguageController {
     private final IProgrammingLanguageService programmingLanguageService;
     private final IDigitalProfileService digitalProfileService;
-    public ProgrammingLanguageController(IProgrammingLanguageService programmingLanguageService, IDigitalProfileService digitalProfileService) {
+    private final IDeveloperService developerService;
+    public ProgrammingLanguageController(IProgrammingLanguageService programmingLanguageService, IDigitalProfileService digitalProfileService, IDeveloperService developerService) {
         this.programmingLanguageService = programmingLanguageService;
         this.digitalProfileService = digitalProfileService;
+        this.developerService = developerService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -63,23 +69,24 @@ public class ProgrammingLanguageController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @PostMapping(value = "/{id_digital_profile}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Create Programming Language", notes = "Method for create a Programming Language")
+ 
+    @PostMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Create a new Programming Language", notes = "Method for create a new Programming Language")
+ 
     @ApiResponses({
             @ApiResponse(code = 201, message = "Programming Language created"),
-            @ApiResponse(code = 400, message = "Programming Language Not Created"),
+            @ApiResponse(code = 404, message = "Programming Language Not Found"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
-    public ResponseEntity<ProgrammingLanguage> createProgrammingLanguage( @PathVariable("id_digital_profile") Long id, @Valid @RequestBody ProgrammingLanguage programmingLanguage){
+    public ResponseEntity<ProgrammingLanguage> createProgrammingLanguage(@PathVariable("id") Long id, @Valid @RequestBody ProgrammingLanguage programmingLanguage){
         try {
             Optional<DigitalProfile> digitalProfile = digitalProfileService.getById(id);
-            if (!digitalProfile.isPresent())
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            else{
+            if(digitalProfile.isPresent()){
                 programmingLanguage.setDigitalProfile(digitalProfile.get());
-                ProgrammingLanguage newProgrammingLanguage = programmingLanguageService.save(programmingLanguage);
-                return new ResponseEntity<>(newProgrammingLanguage, HttpStatus.CREATED);
+                ProgrammingLanguage programmingLanguage1 = programmingLanguageService.save(programmingLanguage);
+                return new ResponseEntity<>(programmingLanguage1, HttpStatus.CREATED);
+            }else{
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
         } catch (Exception e) {
@@ -141,6 +148,28 @@ public class ProgrammingLanguageController {
             }
             else {
                 List<ProgrammingLanguage> programmingLanguages = programmingLanguageService.findByDigitalProfileId(digitalProfileId);
+                return new ResponseEntity<>(programmingLanguages, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/developer/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search Programming Languages by Developer Id", notes = "Method for find Programming Languages by Developer id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Programming Languages found by Developer Id"),
+            @ApiResponse(code = 404, message = "Programming Languages Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<ProgrammingLanguage>> findProgrammingLanguagesByDeveloperId(@PathVariable("id") Long developerId){
+        try {
+            Optional<Developer> developer = developerService.getById(developerId);
+            if (!developer.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                List<ProgrammingLanguage> programmingLanguages = programmingLanguageService.findByDeveloperId(developerId);
                 return new ResponseEntity<>(programmingLanguages, HttpStatus.OK);
             }
         } catch (Exception e) {

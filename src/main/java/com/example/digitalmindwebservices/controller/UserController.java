@@ -15,7 +15,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/users")
@@ -166,6 +165,23 @@ public class UserController {
     public ResponseEntity<List<User>> findByRole (@PathVariable ("role") String role){
         try {
             List<User> users = userService.findByRole(role);
+            if(users.size() == 0)
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping(value = "/searchByFrameworkAndProgrammingLanguageAndDatabase/{framework}&{programmingLanguage}&{database}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search User by Framework, Programming Language and Database", notes = "Method for find a User by Framework, Programming Language and Database")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User found by Framework, Programming Language and Database"),
+            @ApiResponse(code = 404, message = "User Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<User>> findByFrameworkAndProgrammingLanguageAndDatabase (@PathVariable ("framework") String framework, @PathVariable ("programmingLanguage") String programmingLanguage, @PathVariable ("database") String database){
+        try {
+            List<User> users = userService.findDeveloperByFrameworkAndProgrammingLanguageAndDatabase(framework, programmingLanguage, database);
             if(users.size() == 0)
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             return new ResponseEntity<>(users, HttpStatus.OK);
