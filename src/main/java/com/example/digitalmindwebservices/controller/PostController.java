@@ -131,4 +131,23 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "/company/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Search Posts by Company Id", notes = "Method for find a Post by Company")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Posts found by Company Id"),
+            @ApiResponse(code = 404, message = "Posts Not Found"),
+            @ApiResponse(code = 501, message = "Internal Server Error")
+    })
+    public ResponseEntity<List<Post>> findByCompanyId (@PathVariable("id") Long id){
+        try {
+            List<Post> posts = postService.findByCompany_Id(id);
+            if(posts.size()>0)
+                return new ResponseEntity<>(posts, HttpStatus.OK);
+            else
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

@@ -39,5 +39,10 @@ public class PostServiceImpl implements IPostService {
         return postRepository.findById(id);
     }
 
+    @Override
+    public List<Post> findByCompany_Id(Long company_id) throws Exception {
+        return postRepository.findByCompany_Id(company_id);
+    }
+
 
 }
