@@ -1,6 +1,8 @@
 package com.example.digitalmindwebservices.controller;
 
+import com.example.digitalmindwebservices.entities.Company;
 import com.example.digitalmindwebservices.entities.Post;
+import com.example.digitalmindwebservices.service.ICompanyService;
 import com.example.digitalmindwebservices.service.IPostService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,8 +23,10 @@ import java.util.Optional;
 @Api(tags = "Users", value = "Web Service RESTFul of Posts")
 public class PostController {
     private final IPostService postService;
-    public PostController(IPostService postService) {
+    private final ICompanyService companyService;
+    public PostController(IPostService postService, ICompanyService companyService) {
         this.postService = postService;
+        this.companyService = companyService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -63,17 +67,23 @@ public class PostController {
         }
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Create Post", notes = "Method for create a Post")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Post created"),
             @ApiResponse(code = 404, message = "Post Not Found"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
-    public ResponseEntity<Post> createPost(@Valid @RequestBody Post post){
+    public ResponseEntity<Post> createPost(@PathVariable("id") Long id, @Valid @RequestBody Post post){
         try {
-            Post newPost = postService.save(post);
-            return ResponseEntity.status(HttpStatus.CREATED).body(newPost);
+            Optional<Company> userCompany = companyService.getById(id);
+            if(!userCompany.isPresent())
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            else {
+                post.setCompany(userCompany.get());
+                Post newPost = postService.save(post);
+                return ResponseEntity.status(HttpStatus.CREATED).body(newPost);
+            }
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
