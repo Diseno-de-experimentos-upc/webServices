@@ -25,3 +25,12 @@ Feature: User Adding
         When A User who are registered in DB
         Then A List of Customer with status 200 is received
 
+Feature: User Update
+  As User
+  I want to update my data through the API
+  So to be able to make corrections to my data
+
+  @update-user-by-id
+  Scenario: Update a User by id
+    When A User Update is sent with id id "2", "Zen", "Turrones", "zen990@gmail.com", "932121245", "zenT#12345", "driver", "I am a expert Driver", "https://image", "https://banner_image"
+    Then A User with status 200 is received
