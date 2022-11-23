@@ -25,7 +25,3 @@ Feature: User Adding
         When A User who are registered in DB
         Then A List of Customer with status 200 is received
 
-  @update-user-by-id
-    Scenario: Update a User by id
-        When A User Update is sent with id id "4", "Abel", "Espiritu", "cierto10@gmail.com", "993293831", "Abel#12345", "driver", "I am a expert Driver", "https://image", "https://banner_image"
-        Then A User with status 200 is received
