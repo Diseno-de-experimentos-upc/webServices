@@ -80,14 +80,7 @@ public class UserStepDefinitions {
 
 
 
-    @When("A User Update is sent with id id {string}, {string}, {string}, {string}, {string}, {string}, {string}, {string}, {string}, {string}")
-    public void aUserUpdateIsSentWithIdId(String user_id, String firstName, String lastName, String email, String phone, String password, String role, String description, String image, String bannerImage) {
-        Map<String, String> params = new HashMap<>();
-        params.put("id", user_id);
-        User user = new User(0L, firstName, lastName, email, phone, password, role, description, image, bannerImage);
-        testRestTemplate.put(endpointPath+"/{id}", user, params);
-        responseEntity = new ResponseEntity<>(user.toString(),HttpStatus.OK);
-    }
+    
 
 
 
