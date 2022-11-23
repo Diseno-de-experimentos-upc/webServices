@@ -27,9 +27,7 @@ public class ProjectStepDefinitions {
     private int randomServerPort;
     private String endpointPath = "http://localhost:%d/api/v1/projects/digitalProfile";
     private String endpointPathGetDigitalProfileById = "http://localhost:%d/api/v1/digital_profiles";
-
     private ResponseEntity<String> responseEntity;
-    private Developer developer;
     private DigitalProfile digitalProfile;
 
     @Given("A developer with digital profile id {string} wants to add a project to his digital profile")
@@ -52,7 +50,6 @@ public class ProjectStepDefinitions {
         HttpEntity<Project> request = new HttpEntity<>(project, headers);
 
         responseEntity = testRestTemplate.postForEntity(endpointPath+"/{digitalProfile_id}", request, String.class, params);
-
     }
 
     @Then("A Project with status code {int} is received")
