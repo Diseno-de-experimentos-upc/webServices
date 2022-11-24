@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/digital_profiles")
-@CrossOrigin(origins = "*")
 @Api(value = "Web Service RESTFul of Digital Profiles", tags = "DigitalProfiles")
 public class DigitalProfileController {
 
@@ -73,7 +73,7 @@ public class DigitalProfileController {
     }
 
    //post method to create a new digital profile by developer id
-    @PostMapping(value = "/{developer_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{developer_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Create a new Digital Profile", notes = "Method for creating a new Digital Profile")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Digital Profile created successfully"),

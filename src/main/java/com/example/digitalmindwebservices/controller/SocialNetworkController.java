@@ -18,9 +18,9 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/socialNetworks")
-@CrossOrigin(origins = "*")
 @Api(tags = "SocialNetworks", value = "Web Service RESTFul of Social Networks")
 public class SocialNetworkController {
 

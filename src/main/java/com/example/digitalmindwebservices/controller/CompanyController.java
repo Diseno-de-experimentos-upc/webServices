@@ -17,9 +17,9 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/companies")
-@CrossOrigin(origins = "*")
 @Api(tags = "Companies", value = "Web Service RESTFul of Companies")
 public class CompanyController {
 
