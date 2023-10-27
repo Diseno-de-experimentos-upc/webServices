@@ -20,7 +20,7 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/posts")
-@Api(tags = "Users", value = "Web Service RESTFul of Posts")
+@Api(tags = "Posts", value = "Web Service RESTFul of Posts")
 public class PostController {
     private final IPostService postService;
     private final ICompanyService companyService;
