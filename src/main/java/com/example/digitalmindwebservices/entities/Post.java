@@ -26,6 +26,11 @@ public class Post implements Serializable {
     private String description;
     @Column(name = "image_url", nullable = false, length = 500)
     private String imageUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    private PostStatus status;
+
     @ManyToOne
     @JoinColumn(name = "company_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
