@@ -13,7 +13,15 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 public class Developer extends User {
-    public Developer(Long id, String firstName, String lastName, String email, String phone, String password, String role, String description, String image, String bannerImage) {
+    public Developer(Long id, String firstName, String lastName, String email,
+                     String phone, String password, String role, String description,
+                     String image, String bannerImage) {
         super(id, firstName, lastName, email, phone, password, role, description, image, bannerImage);
+    }
+
+    public Developer(Long id, String firstName, String lastName, String email,
+                     String phone, String password, String role, String description,
+                     String image, String bannerImage,Integer rate) {
+        super(id, firstName, lastName, email, phone, password, role, description, image, bannerImage, rate);
     }
 }

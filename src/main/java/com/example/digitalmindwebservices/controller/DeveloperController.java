@@ -82,14 +82,11 @@ public class DeveloperController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 501, message = "Internal Server Error")
     })
-    public ResponseEntity<Developer> updateDeveloper(@PathVariable("id") Long id, @Valid @RequestBody Developer developer){
+    public ResponseEntity<Developer> updateDeveloper(@PathVariable("id") Long id, @RequestBody Developer developer){
         try {
-            if(id.equals(developer.getId())){
-                Developer developerUpdate = developerService.save(developer);
-                return new ResponseEntity<>(developerUpdate, HttpStatus.OK);
-            }else{
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
+            Developer developerUpdate = developerService.save(developer);
+            return new ResponseEntity<>(developerUpdate, HttpStatus.OK);
+
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

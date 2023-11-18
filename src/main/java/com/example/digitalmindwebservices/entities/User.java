@@ -38,4 +38,24 @@ public class User {
     private String image;
     @Column(name = "banner_image", nullable = false, length = 500)
     private String bannerImage;
+
+    @Column(name = "rate", nullable = true)
+    private Integer rate;
+
+    public User(Long id, String firstName, String lastName, String email,
+                String phone, String password, String role, String description,
+                String image, String bannerImage) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phone = phone;
+        this.password = password;
+        this.role = role;
+        this.description = description;
+        this.image = image;
+        this.bannerImage = bannerImage;
+
+    }
+
 }
